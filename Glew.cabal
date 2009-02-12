@@ -1,0 +1,31 @@
+Name:                Glew
+Version:             0.0.0
+Cabal-Version:       >= 1.2
+Synopsis:            GLEW mini-binding
+Category:            graphics
+Description:
+  Glew is a Haskell binding to a (currently very small) subset of GLEW
+  (<http://glew.sourceforge.net>).
+  .
+  &#169; 2009 by Ivan Tomac & Conal Elliott; BSD3 license.
+Author:              Ivan Tomac & Conal Elliott
+Maintainer:          conal@conal.net
+Homepage:            http://haskell.org/haskellwiki/Glew
+Package-Url:         http://code.haskell.org/~conal/code/Glew
+Copyright:           (c) 2009 by Ivan Tomac & Conal Elliott
+License:             BSD3
+Stability:           experimental
+build-type:          Simple
+
+Library
+  hs-Source-Dirs:      src
+  Extensions:
+  Build-Depends:       base, array, OpenGL, GLUT
+  Exposed-Modules:     
+                       Graphics.Glew
+                       
+  ghc-options:         -Wall
+
+  extra-libraries:     GLEW
+
+--  ghc-prof-options:    -prof -auto-all 
