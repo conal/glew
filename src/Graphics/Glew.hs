@@ -12,7 +12,11 @@
 -- Some GLEW functions
 ----------------------------------------------------------------------
 
-module Graphics.Glew where
+module Graphics.Glew
+  ( VertexAttribPointerType, glVertexAttribPointer
+  , EnableVertexAttribType , glEnableVertexAttrib
+  , glewInit
+  ) where
 
 
 import Data.Int
