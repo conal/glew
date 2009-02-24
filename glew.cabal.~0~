@@ -1,4 +1,4 @@
-Name:                glew
+Name:                Glew
 Version:             0.0.1
 Cabal-Version:       >= 1.2
 Synopsis:            GLEW mini-binding
@@ -10,8 +10,8 @@ Description:
   &#169; 2009 by Ivan Tomac & Conal Elliott; BSD3 license.
 Author:              Ivan Tomac & Conal Elliott
 Maintainer:          conal@conal.net
-Homepage:            http://haskell.org/haskellwiki/glew
-Package-Url:         http://code.haskell.org/~conal/code/glew
+Homepage:            http://haskell.org/haskellwiki/Glew
+Package-Url:         http://code.haskell.org/~conal/code/Glew
 Copyright:           (c) 2009 by Ivan Tomac & Conal Elliott
 License:             BSD3
 Stability:           experimental
