@@ -83,8 +83,31 @@ glVertexShader = #const GL_VERTEX_SHADER
 glFragmentShader :: GLenum
 glFragmentShader = #const GL_FRAGMENT_SHADER
 
-glFloat :: GLenum
-glFloat = #const GL_FLOAT
+
+glByte   :: GLenum
+glByte   = #const GL_BYTE
+
+glShort  :: GLenum
+glShort  = #const GL_SHORT
+
+glInt    :: GLenum
+glInt    = #const GL_INT
+
+glUByte  :: GLenum
+glUByte  = #const GL_UNSIGNED_BYTE
+
+glUShort :: GLenum
+glUShort = #const GL_UNSIGNED_SHORT
+
+glUInt   :: GLenum
+glUInt   = #const GL_UNSIGNED_INT
+
+glFloat  :: GLenum
+glFloat  = #const GL_FLOAT
+
+glDouble :: GLenum
+glDouble = #const GL_DOUBLE
+
 
 #importptr EnableVertexAttribArray, GLuint -> IO ()
 #importptr GetAttribLocation      , GLuint -> CString -> IO GLint
