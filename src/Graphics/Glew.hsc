@@ -4,7 +4,7 @@
 -- |
 -- Module      :  Graphics.Glew
 -- Copyright   :  (c) Ivan Tomac 2009
--- License     :  BSD3
+-- License     :  GPL-3
 -- 
 -- Maintainer  :  conal@conal.net
 -- Stability   :  experimental
