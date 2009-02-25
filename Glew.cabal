@@ -13,7 +13,8 @@ Maintainer:          conal@conal.net
 Homepage:            http://haskell.org/haskellwiki/glew
 Package-Url:         http://code.haskell.org/~conal/code/glew
 Copyright:           (c) 2009 by Ivan Tomac & Conal Elliott
-License:             BSD3
+License:             GPL
+License-File:        COPYING
 Stability:           experimental
 build-type:          Simple
 
