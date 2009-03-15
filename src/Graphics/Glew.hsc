@@ -14,10 +14,12 @@
 
 module Graphics.Glew where
 
+import Control.Monad (when)
 import Control.Applicative
 
 import Foreign
 import Foreign.C
+
 
 import System.IO.Unsafe
 
@@ -25,6 +27,14 @@ import Graphics.UI.GLUT
 
 
 #include "GL/glew.h"
+
+-- TODO: Add checks for other X11 systems, not just Linux.
+
+#if defined( _WIN32 )
+#   include "GL/wglew.h"
+#elif defined( __linux__ )
+#   include "GL/glxew.h"
+#endif
 
 #ifdef _WIN32
 
@@ -46,6 +56,18 @@ let importptr name, sig =
    "gl" #name " = mk" #name " $ unsafePerformIO $ peek glew" #name "\n"
 }
 
+#{
+let importwglptr name, sig =
+   "foreign import stdcall \"&__wglew" #name "\" wglew" #name "\n"
+   "  :: Ptr (FunPtr (" #sig "))\n"
+   "\n"
+   "foreign import stdcall \"dynamic\" mk" #name "\n"
+   "  :: FunPtr (" #sig ") -> " #sig "\n"
+   "\n"
+   "wgl" #name " :: " #sig "\n"
+   "wgl" #name " = mk" #name " $ unsafePerformIO $ peek wglew" #name "\n"
+}
+
 #else
 
 #{
@@ -64,6 +86,18 @@ let importptr name, sig =
    "\n"
    "gl" #name " :: " #sig "\n"
    "gl" #name " = mk" #name " $ unsafePerformIO $ peek glew" #name "\n"
+}
+
+#{
+let importglxptr name, sig =
+   "foreign import ccall \"&__glewX" #name "\" glewX" #name "\n"
+   "  :: Ptr (FunPtr (" #sig "))\n"
+   "\n"
+   "foreign import ccall \"dynamic\" mk" #name "\n"
+   "  :: FunPtr (" #sig ") -> " #sig "\n"
+   "\n"
+   "glX" #name " :: " #sig "\n"
+   "glX" #name " = mk" #name " $ unsafePerformIO $ peek glewX" #name "\n"
 }
 
 #endif
@@ -295,16 +329,14 @@ glGetShaderLog p = do
 #importptr Uniform3i, GLint -> GLint -> GLint -> GLint -> IO ()
 #importptr Uniform4i, GLint -> GLint -> GLint -> GLint -> GLint -> IO ()
 
--- What to do with the 'const GLfloat *' etc?
-
--- #importptr Uniform1fv, GLint -> GLsizei -> const GLfloat * -> IO ()
--- #importptr Uniform2fv, GLint -> GLsizei -> const GLfloat * -> IO ()
--- #importptr Uniform3fv, GLint -> GLsizei -> const GLfloat * -> IO ()
--- #importptr Uniform4fv, GLint -> GLsizei -> const GLfloat * -> IO ()
--- #importptr Uniform1iv, GLint -> GLsizei -> const GLint * -> IO ()
--- #importptr Uniform2iv, GLint -> GLsizei -> const GLint * -> IO ()
--- #importptr Uniform3iv, GLint -> GLsizei -> const GLint * -> IO ()
--- #importptr Uniform4iv, GLint -> GLsizei -> const GLint * -> IO ()
+#importptr Uniform1fv, GLint -> GLsizei -> Ptr GLfloat -> IO ()
+#importptr Uniform2fv, GLint -> GLsizei -> Ptr GLfloat -> IO ()
+#importptr Uniform3fv, GLint -> GLsizei -> Ptr GLfloat -> IO ()
+#importptr Uniform4fv, GLint -> GLsizei -> Ptr GLfloat -> IO ()
+#importptr Uniform1iv, GLint -> GLsizei -> Ptr GLint -> IO ()
+#importptr Uniform2iv, GLint -> GLsizei -> Ptr GLint -> IO ()
+#importptr Uniform3iv, GLint -> GLsizei -> Ptr GLint -> IO ()
+#importptr Uniform4iv, GLint -> GLsizei -> Ptr GLint -> IO ()
 
 
 glGetAttribLoc :: GLuint -> String -> IO GLint
@@ -317,5 +349,41 @@ glLoadShader :: GLuint -> String -> IO ()
 glLoadShader o s = withCString s $ (`with` glLoadShader')
     where
         glLoadShader' = glShaderSource o 1 `flip` nullPtr
+
+glEnableVSync :: Bool -> IO ()
+glWaitVSync   :: IO ()
+
+#if defined( _WIN32 )
+
+#importwglptr SwapIntervalEXT, CInt -> IO CInt
+
+glEnableVSync = fmap (const ()) . wglSwapIntervalEXT . fromIntegral . fromEnum
+glWaitVSync   = return ()
+
+#elif defined ( __linux__ )
+
+#importglxptr GetVideoSyncSGI , Ptr CUInt -> IO CInt
+#importglxptr WaitVideoSyncSGI, CInt -> CInt -> Ptr CUInt -> IO CInt
+
+foreign import ccall "&__GLXEW_SGI_video_sync" glxew_SGI_video_sync
+  :: Ptr GLboolean
+
+glxewSGIVideoSync :: Bool
+glxewSGIVideoSync = unsafePerformIO $ (toEnum.fromIntegral) <$> peek glxew_SGI_video_sync
+
+glEnableVSync = const $ return ()
+
+glWaitVSync =
+  when glxewSGIVideoSync $ do
+    count <- alloca ((>>) <$> glXGetVideoSyncSGI <*> peek)
+    alloca $ glXWaitVideoSyncSGI 2 (fromIntegral ((count + 1) `mod` 2))
+    return ()
+
+#else
+
+glEnableVSync = const $ return ()
+glWaitVSync   = return ()
+
+#endif
 
 foreign import ccall "glewInit" glewInit :: IO Int
