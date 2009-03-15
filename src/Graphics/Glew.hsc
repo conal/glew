@@ -87,6 +87,9 @@ glFragmentShader = #const GL_FRAGMENT_SHADER
 glInfoLogLength :: GLenum
 glInfoLogLength = #const GL_INFO_LOG_LENGTH
 
+glBool   :: GLenum
+glBool   = #const GL_BOOL
+
 glByte   :: GLenum
 glByte   = #const GL_BYTE
 
@@ -282,13 +285,27 @@ glGetShaderLog p = do
         (fromIntegral len)
         ((>>) <$> glGetShaderInfoLog p len nullPtr <*> peekCString)
 
-#importptr Uniform1i, GLint -> GLint -> IO ()
-#importptr Uniform1f, GLint -> GLfloat -> IO ()
 
-#{
-importptr Uniform4f
-        , GLint -> GLfloat -> GLfloat -> GLfloat -> GLfloat -> IO ()
-}
+#importptr Uniform1f, GLint -> GLfloat -> IO ()
+#importptr Uniform2f, GLint -> GLfloat -> GLfloat -> IO ()
+#importptr Uniform3f, GLint -> GLfloat -> GLfloat -> GLfloat -> IO ()
+#importptr Uniform4f, GLint -> GLfloat -> GLfloat -> GLfloat -> GLfloat -> IO ()
+#importptr Uniform1i, GLint -> GLint -> IO ()
+#importptr Uniform2i, GLint -> GLint -> GLint -> IO ()
+#importptr Uniform3i, GLint -> GLint -> GLint -> GLint -> IO ()
+#importptr Uniform4i, GLint -> GLint -> GLint -> GLint -> GLint -> IO ()
+
+-- What to do with the 'const GLfloat *' etc?
+
+-- #importptr Uniform1fv, GLint -> GLsizei -> const GLfloat * -> IO ()
+-- #importptr Uniform2fv, GLint -> GLsizei -> const GLfloat * -> IO ()
+-- #importptr Uniform3fv, GLint -> GLsizei -> const GLfloat * -> IO ()
+-- #importptr Uniform4fv, GLint -> GLsizei -> const GLfloat * -> IO ()
+-- #importptr Uniform1iv, GLint -> GLsizei -> const GLint * -> IO ()
+-- #importptr Uniform2iv, GLint -> GLsizei -> const GLint * -> IO ()
+-- #importptr Uniform3iv, GLint -> GLsizei -> const GLint * -> IO ()
+-- #importptr Uniform4iv, GLint -> GLsizei -> const GLint * -> IO ()
+
 
 glGetAttribLoc :: GLuint -> String -> IO GLint
 glGetAttribLoc o s = withCString s $ glGetAttribLocation o
