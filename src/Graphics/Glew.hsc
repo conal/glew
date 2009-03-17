@@ -306,18 +306,18 @@ importptr GetShaderInfoLog
 }
 
 glGetProgramLog :: GLuint -> IO String
-glGetProgramLog p = do
-    len <- alloca ((>>) <$> glGetProgramiv p glInfoLogLength <*> peek)
-    allocaArray
-        (fromIntegral len)
-        ((>>) <$> glGetProgramInfoLog p len nullPtr <*> peekCString)
+glGetProgramLog p =
+  do len <- alloca ((>>) <$> glGetProgramiv p glInfoLogLength <*> peek)
+     allocaArray
+         (fromIntegral len)
+         ((>>) <$> glGetProgramInfoLog p len nullPtr <*> peekCString)
 
 glGetShaderLog :: GLuint -> IO String
-glGetShaderLog p = do
-    len <- alloca ((>>) <$> glGetShaderiv p glInfoLogLength <*> peek)
-    allocaArray
-        (fromIntegral len)
-        ((>>) <$> glGetShaderInfoLog p len nullPtr <*> peekCString)
+glGetShaderLog p =
+  do len <- alloca ((>>) <$> glGetShaderiv p glInfoLogLength <*> peek)
+     allocaArray
+         (fromIntegral len)
+         ((>>) <$> glGetShaderInfoLog p len nullPtr <*> peekCString)
 
 
 #importptr Uniform1f, GLint -> GLfloat -> IO ()
@@ -347,8 +347,8 @@ glGetUniformLoc o s = withCString s $ glGetUniformLocation o
 
 glLoadShader :: GLuint -> String -> IO ()
 glLoadShader o s = withCString s $ (`with` glLoadShader')
-    where
-        glLoadShader' = glShaderSource o 1 `flip` nullPtr
+ where
+   glLoadShader' = glShaderSource o 1 `flip` nullPtr
 
 glEnableVSync :: Bool -> IO ()
 glWaitVSync   :: IO ()
@@ -365,19 +365,30 @@ glWaitVSync   = return ()
 #importglxptr GetVideoSyncSGI , Ptr CUInt -> IO CInt
 #importglxptr WaitVideoSyncSGI, CInt -> CInt -> Ptr CUInt -> IO CInt
 
+#importglxptr SwapIntervalSGI, CInt -> IO CInt
+
 foreign import ccall "&__GLXEW_SGI_video_sync" glxew_SGI_video_sync
   :: Ptr GLboolean
 
 glxewSGIVideoSync :: Bool
 glxewSGIVideoSync = unsafePerformIO $ (toEnum.fromIntegral) <$> peek glxew_SGI_video_sync
 
-glEnableVSync = const $ return ()
-
 glWaitVSync =
   when glxewSGIVideoSync $ do
     count <- alloca ((>>) <$> glXGetVideoSyncSGI <*> peek)
     alloca $ glXWaitVideoSyncSGI 2 (fromIntegral ((count + 1) `mod` 2))
     return ()
+
+foreign import ccall "&__GLXEW_SGI_swap_control" glxew_SGI_swap_control
+  :: Ptr GLboolean
+
+glxewSGISwapControl :: Bool
+glxewSGISwapControl =
+  unsafePerformIO $ (toEnum.fromIntegral) <$> peek glxew_SGI_swap_control
+
+glEnableVSync =
+  when glxewSGISwapControl .
+    fmap (const ()) . glXSwapIntervalSGI . fromIntegral . fromEnum
 
 #else
 
