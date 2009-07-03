@@ -166,8 +166,10 @@ glFramebufferEXT = #const GL_FRAMEBUFFER_EXT
 glRenderbufferEXT :: GLenum
 glRenderbufferEXT = #const GL_RENDERBUFFER_EXT
 
-glTexture2D :: GLenum
+glTexture1D,glTexture2D,glTexture3D :: GLenum
+glTexture1D = #const GL_TEXTURE_1D
 glTexture2D = #const GL_TEXTURE_2D
+glTexture3D = #const GL_TEXTURE_3D
 
 glRGBA :: GLenum
 glRGBA = #const GL_RGBA
