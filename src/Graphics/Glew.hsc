@@ -404,27 +404,27 @@ foreign import ccall "glewInit" glewInit :: IO Int
 
 ---- Queries
 
-type Get1 a = GLenum -> IO a
+glAlloc1 :: Storable a => (Ptr a  -> IO ()) -> IO a
+glAlloc1 f = alloca ((>>) <$> f <*> peek)
 
-glGet1 :: Storable a => (GLenum -> Ptr a  -> IO ()) -> Get1 a
-glGet1 f i = alloca ((>>) <$> f i <*> peek)
+-- TODO: use glAlloc1 above.
+
 
 #import GetDoublev  , GLenum -> Ptr GLdouble  -> IO ()
 #import GetBooleanv , GLenum -> Ptr GLboolean -> IO ()
 #import GetFloatv   , GLenum -> Ptr GLfloat   -> IO ()
 #import GetIntegerv , GLenum -> Ptr GLint     -> IO ()
 
-glGetDouble  :: Get1 GLdouble
-glGetDouble  = glGet1 glGetDoublev
 
-glGetBoolean :: Get1 GLboolean
-glGetBoolean = glGet1 glGetBooleanv
+glGetDouble  :: GLenum -> IO GLdouble
+glGetBoolean :: GLenum -> IO GLboolean
+glGetFloat   :: GLenum -> IO GLfloat
+glGetInteger :: GLenum -> IO GLint
 
-glGetFloat   :: Get1 GLfloat
-glGetFloat   = glGet1 glGetFloatv
-
-glGetInteger = glGet1 glGetIntegerv
-glGetInteger :: Get1 GLint
+glGetDouble  = glAlloc1 . glGetDoublev
+glGetBoolean = glAlloc1 . glGetBooleanv
+glGetFloat   = glAlloc1 . glGetFloatv
+glGetInteger = glAlloc1 . glGetIntegerv
 
 
 -- There are a *lot* of enums.  We could import all of them from glew.h,
