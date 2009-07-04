@@ -400,3 +400,37 @@ glWaitVSync   = return ()
 #endif
 
 foreign import ccall "glewInit" glewInit :: IO Int
+
+
+---- Queries
+
+#import GetDoublev  , GLenum -> Ptr GLdouble  -> IO ()
+#import GetBooleanv , GLenum -> Ptr GLboolean -> IO ()
+#import GetFloatv   , GLenum -> Ptr GLfloat   -> IO ()
+#import GetIntegerv , GLenum -> Ptr GLint     -> IO ()
+
+glGetDouble  :: GLenum -> IO GLdouble
+glGetBoolean :: GLenum -> IO GLboolean
+glGetFloat   :: GLenum -> IO GLfloat
+glGetInteger :: GLenum -> IO GLint
+
+glGetDouble  i = alloca ((>>) <$> glGetDoublev  i <*> peek)
+glGetBoolean i = alloca ((>>) <$> glGetBooleanv i <*> peek)
+glGetFloat   i = alloca ((>>) <$> glGetFloatv   i <*> peek)
+glGetInteger i = alloca ((>>) <$> glGetIntegerv i <*> peek)
+
+
+-- There are a *lot* of enums.  We could import all of them from glew.h,
+-- with some simple code generation.  Start by grepping for #define in glew.h.
+-- 
+-- Or #include glew.h and use the constants directly.
+
+glMaxCombinedTextureImageUnits :: GLenum
+glMaxCombinedTextureImageUnits = #const GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+
+-- Not working:
+-- 
+--     Graphics.Glew> glMaxCombinedTextureImageUnits
+--     35661
+--     Graphics.Glew> glGetInteger glMaxCombinedTextureImageUnits
+--     Process haskell segmentation fault
