@@ -427,10 +427,3 @@ glGetInteger i = alloca ((>>) <$> glGetIntegerv i <*> peek)
 
 glMaxCombinedTextureImageUnits :: GLenum
 glMaxCombinedTextureImageUnits = #const GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
-
--- Not working:
--- 
---     Graphics.Glew> glMaxCombinedTextureImageUnits
---     35661
---     Graphics.Glew> glGetInteger glMaxCombinedTextureImageUnits
---     Process haskell segmentation fault
