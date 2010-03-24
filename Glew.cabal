@@ -1,5 +1,5 @@
 Name:                glew
-Version:             0.0.2
+Version:             0.0.3
 Cabal-Version:       >= 1.2
 Synopsis:            GLEW mini-binding
 Category:            graphics
@@ -21,7 +21,7 @@ build-type:          Simple
 Library
   hs-Source-Dirs:      src
   Extensions:
-  Build-Depends:       base, array, OpenGL, GLUT
+  Build-Depends:       base<5, array, OpenGL>=2.4.0.1, GLUT
   Exposed-Modules:     
                        Graphics.Glew
                        

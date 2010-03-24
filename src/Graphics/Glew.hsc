@@ -14,7 +14,7 @@
 
 module Graphics.Glew where
 
-import Control.Monad (when)
+-- import Control.Monad (when)
 import Control.Applicative
 
 import Foreign
@@ -308,18 +308,40 @@ importptr GetShaderInfoLog
 }
 
 glGetProgramLog :: GLuint -> IO String
-glGetProgramLog p =
-  do len <- alloca ((>>) <$> glGetProgramiv p glInfoLogLength <*> peek)
-     allocaArray
-         (fromIntegral len)
-         ((>>) <$> glGetProgramInfoLog p len nullPtr <*> peekCString)
+glGetProgramLog = glGetLog glGetProgramiv glGetProgramInfoLog
+
+-- glGetProgramLog p =
+--   do len <- alloca ((>>) <$> glGetProgramiv p glInfoLogLength <*> peek)
+--      allocaArray
+--          (fromIntegral len)
+--          ((>>) <$> glGetProgramInfoLog p (fromIntegral len) nullPtr <*> peekCString)
 
 glGetShaderLog :: GLuint -> IO String
-glGetShaderLog p =
-  do len <- alloca ((>>) <$> glGetShaderiv p glInfoLogLength <*> peek)
+glGetShaderLog = glGetLog glGetShaderiv glGetShaderInfoLog
+
+-- glGetShaderLog p =
+--   do len <- alloca ((>>) <$> glGetShaderiv p glInfoLogLength <*> peek)
+--      allocaArray
+--          (fromIntegral len)
+--          ((>>) <$> glGetShaderInfoLog p (fromIntegral len) nullPtr <*> peekCString)
+
+-- abstract commonality:
+
+-- glGetLog :: GLenum
+--             -> (GLuint -> GLsizei -> Ptr a -> Ptr CChar -> IO b)
+--             -> GLuint
+--             -> IO String
+glGetLog :: (Storable c, Integral c, Num b) =>
+            (a -> GLenum -> Ptr c -> IO d)
+            -> (a -> b -> Ptr q -> Ptr CChar -> IO d)
+            -> a
+            -> IO String
+
+glGetLog getFrom getLog p =
+  do len <- alloca ((>>) <$> getFrom p glInfoLogLength <*> peek)
      allocaArray
          (fromIntegral len)
-         ((>>) <$> glGetShaderInfoLog p len nullPtr <*> peekCString)
+         ((>>) <$> getLog p (fromIntegral len) nullPtr <*> peekCString)
 
 
 #importptr Uniform1f, GLint -> GLfloat -> IO ()
@@ -434,3 +456,8 @@ glGetInteger = glAlloc1 . glGetIntegerv
 
 glMaxCombinedTextureImageUnits :: GLenum
 glMaxCombinedTextureImageUnits = #const GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
+
+
+-- GLAPI void GLAPIENTRY glEnable (GLenum cap);
+
+#import Enable , GLenum -> IO ()
