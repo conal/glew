@@ -14,14 +14,19 @@
 
 module Graphics.Glew where
 
--- import Control.Monad (when)
+
+#if defined ( __linux__ )
+import Control.Monad (when)
+#endif
 import Control.Applicative
 
 import Foreign
 import Foreign.C
 
 
+-- Used only for win32, and exported by Foreign
 -- import System.IO.Unsafe
+
 
 import Graphics.UI.GLUT
 
