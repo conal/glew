@@ -400,7 +400,7 @@ glxewSGIVideoSync = unsafePerformIO $ (toEnum.fromIntegral) <$> peek glxew_SGI_v
 glWaitVSync =
   when glxewSGIVideoSync $ do
     count <- alloca ((>>) <$> glXGetVideoSyncSGI <*> peek)
-    alloca $ glXWaitVideoSyncSGI 2 (fromIntegral ((count + 1) `mod` 2))
+    _     <- alloca $ glXWaitVideoSyncSGI 2 (fromIntegral ((count + 1) `mod` 2))
     return ()
 
 foreign import ccall "&__GLXEW_SGI_swap_control" glxew_SGI_swap_control
