@@ -1,5 +1,5 @@
 Name:                glew
-Version:             0.0.3
+Version:             0.1.0
 Cabal-Version:       >= 1.2
 Synopsis:            GLEW mini-binding
 Category:            graphics

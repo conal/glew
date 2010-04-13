@@ -21,7 +21,7 @@ import Foreign
 import Foreign.C
 
 
-import System.IO.Unsafe
+-- import System.IO.Unsafe
 
 import Graphics.UI.GLUT
 
