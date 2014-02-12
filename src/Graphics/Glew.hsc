@@ -3,8 +3,8 @@
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.Glew
--- Copyright   :  (c) Ivan Tomac 2009
--- License     :  GPL-3
+-- Copyright   :  (c) Ivan Tomac & Conal Elliott 2009-2011
+-- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net
 -- Stability   :  experimental
