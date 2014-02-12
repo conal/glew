@@ -20,9 +20,9 @@ import Control.Monad (when)
 #endif
 import Control.Applicative
 
-import Foreign
+import Foreign (Ptr,FunPtr,peek,alloca,with,Storable(..),allocaArray,nullPtr)
+import System.IO.Unsafe (unsafePerformIO)
 import Foreign.C
-
 
 -- Used only for win32, and exported by Foreign
 -- import System.IO.Unsafe
